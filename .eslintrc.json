@@ -1,0 +1,17 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "next/core-web-vitals",
+    "standard", "plugin:tailwindcss/recommended",
+    "prettier",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "camelcase": "off",
+    "import/namespace": "off",
+    "import/no-duplicates": "off",
+    "import/no-unresolved": "off",
+    "no-restricted-globals": "off",
+    "no-undef": "off"
+  }
+}
