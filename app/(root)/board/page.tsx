@@ -8,16 +8,22 @@ import BoardItem              from "@/components/boards/BoardItem"
 import { Button }             from "@/components/ui/button"
 import {
   getBoards,
-  getBoardById
+  // getBoardById
 }                             from "@/lib/actions/board.action"
-import { GetIssuesParams }    from "@/lib/actions/shared.types"
+// import { GetIssuesParams }    from "@/lib/actions/shared.types"
 
-const Page = async ({params, searchParams}) => {
-  // const { issues } = await getIssues( params )
-  const boards = await getBoards()
-  // const board = await getBoardById()
-  // const defaultBoardId = allBoardsData[0]?.id
-  const showModal = searchParams.modal
+interface BoardPageProps {
+  params: string;
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+const Page = async ({
+  params, 
+  searchParams
+}: BoardPageProps) => {
+  const showModal = searchParams?.modal
+  const { q } = searchParams ?? { q: "" }
+  const boards = await getBoards({ q } as { q: string })
 
   return (
     <>

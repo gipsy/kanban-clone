@@ -52,4 +52,9 @@ export interface DeleteBoardParams {
 
 export interface GetBoardByIdParams {
   id: string;
+  q: string;
+}
+
+export interface GetBoardsParams {
+  q: string;
 }

@@ -33,7 +33,7 @@ const BoardMainProps = ({
       type: 'SET_ISSUES', 
       payload: { issues: sorted } 
     })
-  }, [boardId])
+  }, [boardId, issues])
 
   const onDragStartHandler = (event: DragStart) => {
     console.log('onDragStart')

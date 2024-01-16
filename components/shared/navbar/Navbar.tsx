@@ -1,15 +1,17 @@
 "use client"
 
-// import styles                   from "./navbar.module.css"
+import styles                   from "./navbar.module.css"
 import Link                     from "next/link"
 import Image                    from "next/image"
-import Theme                    from "@/components/shared/navbar/Theme";
-import MobileNav                from "@/components/shared/navbar/MobileNav";
-import GlobalSearch             from "@/components/search/GlobalSearch";
+import Theme                    from "@/components/shared/navbar/Theme"
+import MobileNav                from "@/components/shared/navbar/MobileNav"
+import GlobalSearch             from "@/components/search/GlobalSearch"
 
-import { Button }               from "@/components/ui/button";
+import { Button }               from "@/components/ui/button"
+import { useParams } from "next/navigation"
 
 const Navbar = () => {
+  const params = useParams()
   return (
     <nav className="flex-between
       background-light900_dark200 fixed z-50
@@ -30,12 +32,8 @@ const Navbar = () => {
       </Link>
       
       
-      <GlobalSearch />
+      {!params.id && <GlobalSearch /> }
 
-      <Button type="button">
-        Load
-      </Button>
-      
       <div className="flex-between gap-5">
         
         <Theme />

@@ -1,10 +1,14 @@
 "use client"
 
 import React, { 
-  useState, useCallback }       from "react"
+  useState }                from "react"
 import Image                from "next/image"
 import { Input }            from "@/components/ui/input"
 import { useBoard }         from "@/context/BoardProvider"
+import { 
+  usePathname, 
+  useSearchParams, 
+  useRouter }               from "next/navigation"
 
 interface CustomInputProps {
   route: string;
@@ -21,28 +25,23 @@ const LocalSearch = ({
   imgSrc,
   placeholder,
   otherClasses,
-  issues
+  // issues
 }: CustomInputProps) => {
-  const { state, dispatch } = useBoard()
-  const [input, setInput] = useState({value: ''})
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const { replace } = useRouter()
+  const { q: inputQuery } = searchParams ?? { q: "" }
 
-  const onChangeHandler = (e) => {
+  const onChangeHandler = (term: string) => {
+    const params = new URLSearchParams(searchParams)
 
-    const filteredIssues = issues.filter(issue => {
-      return issue.title.includes(e.target.value)
-    })
+    if (term) {
+      params.set('q', term)
+    } else {
+      params.delete('q')
+    }
 
-    dispatch({
-      type: "FILTER_ISSUES",
-      payload: { issues: filteredIssues }
-    })
-
-    setInput((prevState) => {
-      return ({
-        ...prevState,
-        value: e.target.value
-      })
-    })
+    replace(`${pathname}?${params.toString()}`)
   }
 
   return (
@@ -61,7 +60,7 @@ const LocalSearch = ({
       <Input
         type="text"
         placeholder={placeholder}
-        value={input.value}
+        value={inputQuery}
         className="
           paragraph-regular
           no-focus placeholder
@@ -69,7 +68,7 @@ const LocalSearch = ({
           background-light800_darkgradient
           border-none shadow-none outline-none
         "
-        onChange={(e) => onChangeHandler(e)}
+        onChange={(e) => onChangeHandler(e.target.value)}
       />
       {iconPosition === 'right' && (<Image
         src={imgSrc}

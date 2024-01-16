@@ -45,7 +45,7 @@ let type: string = 'create'
 
 interface Props {
   board?: boolean;
-  boardId: string;
+  boardId?: string;
 }
 
 // const CreateModal = ({ children }: React.PropsWithChildren) => {

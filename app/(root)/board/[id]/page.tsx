@@ -12,7 +12,9 @@ import LocalSearch      from "@/components/search/LocalSearch"
 const Page = async ({
   params, searchParams
 }) => {
-  const board: IBoard = await getBoardById(params)
+  const { id } = params
+  const { q } = searchParams ?? { q: "" }
+  const board: IBoard = await getBoardById({id, q})
 
   const { title, _id } = board
   // const { issues } = await getIssues(_id)

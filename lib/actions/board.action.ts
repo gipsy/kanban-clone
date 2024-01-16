@@ -4,18 +4,24 @@ import { connectToDatabase } from "@/lib/mongoose"
 import Board                 from "@/database/board.model"
 import Issue                 from "@/database/issue.model"
 
-import { DeleteBoardParams } from "@/lib/actions/shared.types"
 import {
   GetBoardByIdParams,
-  CreateBoardParams
+  CreateBoardParams,
+  DeleteBoardParams,
+  GetBoardsParams
 }                            from "./shared.types"
 import { revalidatePath }    from "next/cache"
 
-export async function getBoards() {
+export async function getBoards(params: GetBoardsParams) {
   try {
     await connectToDatabase()
 
+    const { q } = params
+
     const boards = await Board.find({})
+      .where({
+        ...(q && { title: { $regex: new RegExp(q, "i") }})
+      })
 
     console.log('Boards', boards)
     if (!boards) {
@@ -33,10 +39,17 @@ export async function getBoardById(params: GetBoardByIdParams) {
   try {
     await connectToDatabase()
 
-    const { id } = params
+    const { id, q } = params
+
+    console.log('QUERY', q)
 
     const board = await Board.findById(id)
-      .populate({ path: 'issues', model: Issue, select: '_id title status rank description boardId createdAt' })
+      .populate({ 
+        path: 'issues', 
+        model: Issue, 
+        select: '_id title status rank description boardId createdAt',
+        match: { title: new RegExp(q, "i") },
+      })
 
     console.log('board', board)
     return board
