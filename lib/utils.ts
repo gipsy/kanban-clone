@@ -119,3 +119,6 @@ export function getBetweenRankAsc<TEntity extends IId & IHasRank>(payload: ISort
   return newLexoRank
 }
 
+export function pluralize(count: number, noun: string, suffix = 's') {
+  return `${count} ${noun}${count !== 1 ? suffix : ''}`
+}

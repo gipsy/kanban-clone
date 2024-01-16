@@ -21,7 +21,7 @@ export interface CreateIssueParams {
   status: string;
   rank: string;
   boardId: Schema.Types.ObjectId;
-  path: string;
+  path?: string;
 }
 
 export interface UpdateIssueParams {
@@ -36,11 +36,17 @@ export interface UpdateIssueParams {
 
 export interface DeleteIssueParams {
   _id: string;
+  boardId: string;
 }
 
 export interface CreateBoardParams {
   title: string;
   issues: string[];
+  path: string;
+}
+
+export interface DeleteBoardParams {
+  _id: string;
   path: string;
 }
 

@@ -1,8 +1,10 @@
 "use client"
 
-import React     from "react"
-import Image     from "next/image"
-import { Input } from "@/components/ui/input";
+import React, { 
+  useState, useCallback }       from "react"
+import Image                from "next/image"
+import { Input }            from "@/components/ui/input"
+import { useBoard }         from "@/context/BoardProvider"
 
 interface CustomInputProps {
   route: string;
@@ -10,6 +12,7 @@ interface CustomInputProps {
   imgSrc: string;
   placeholder?: string;
   otherClasses?: string;
+  issues: string;
 }
 
 const LocalSearch = ({
@@ -17,13 +20,36 @@ const LocalSearch = ({
   iconPosition,
   imgSrc,
   placeholder,
-  otherClasses
+  otherClasses,
+  issues
 }: CustomInputProps) => {
+  const { state, dispatch } = useBoard()
+  const [input, setInput] = useState({value: ''})
+
+  const onChangeHandler = (e) => {
+
+    const filteredIssues = issues.filter(issue => {
+      return issue.title.includes(e.target.value)
+    })
+
+    dispatch({
+      type: "FILTER_ISSUES",
+      payload: { issues: filteredIssues }
+    })
+
+    setInput((prevState) => {
+      return ({
+        ...prevState,
+        value: e.target.value
+      })
+    })
+  }
+
   return (
     <div
       className={`background-light800_darkgradient
       relative flex min-h-[56px] grow
-      items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}
+      items-center gap-4 rounded-[10px] px-4 mx-3 mb-8 ${otherClasses}`}
     >
       {iconPosition === 'left' && (<Image
         src={imgSrc}
@@ -35,7 +61,7 @@ const LocalSearch = ({
       <Input
         type="text"
         placeholder={placeholder}
-        value=""
+        value={input.value}
         className="
           paragraph-regular
           no-focus placeholder
@@ -43,9 +69,7 @@ const LocalSearch = ({
           background-light800_darkgradient
           border-none shadow-none outline-none
         "
-        onChange={() => {
-          console.log('on change')
-        }}
+        onChange={(e) => onChangeHandler(e)}
       />
       {iconPosition === 'right' && (<Image
         src={imgSrc}

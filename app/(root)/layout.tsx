@@ -1,6 +1,5 @@
 import React        from 'react'
-import LeftSidebar  from "@/components/shared/LeftSidebar";
-import RightSidebar from "@/components/shared/RightSidebar";
+import LeftSidebar  from "@/components/shared/LeftSidebar"
 
 const Layout = ({ children }: {
   children: React.ReactNode
@@ -22,9 +21,7 @@ const Layout = ({ children }: {
             {children}
           </div>
         </section>
-        
       </div>
-      
     </main>
   )
 }

@@ -1,13 +1,12 @@
 "use client"
 
-import React, { useState } from 'react'
-import IssueCard from "@/components/cards/IssueCard"
-import IssueAdd from "@/components/cards/IssueAdd"
-import { useBoard } from "@/context/BoardProvider"
-import { Droppable } from "react-beautiful-dnd"
+import React, { 
+  useState, Suspense }       from 'react'
+import IssueCard             from "@/components/cards/IssueCard"
+import IssueAdd              from "@/components/cards/IssueAdd"
+import { useBoard }          from "@/context/BoardProvider"
+import { Droppable }         from "react-beautiful-dnd"
 import { sortByLexoRankAsc } from "@/lib/utils"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
 
 interface BoardColumnProps {
   status: string
@@ -35,13 +34,14 @@ const BoardColumn = ({
   const filteredIssues = () => {
     switch (status) {
       case 'to-do':
-        return state.issues.filter(issue => issue.status === 'to-do').sort(sortByLexoRankAsc)
+        return state.issues.filter(issue => 
+          issue.status === 'to-do').sort(sortByLexoRankAsc)
         break;
       case 'in-progress':
         return state.issues.filter(issue => issue.status === 'in-progress').sort(sortByLexoRankAsc)
         break;
       case 'done':
-        return state.issues.filter(issue => issue.status === 'done')
+        return state.issues.filter(issue => issue.status === 'done').sort(sortByLexoRankAsc)
         break;
       default:
         return []
@@ -73,22 +73,24 @@ const BoardColumn = ({
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              isDraggingOver={snapshot.isDraggingOver}
+              // isDraggingOver={snapshot.isDraggingOver}
               className="flex flex-col gap-4"
             >
-              {filteredIssues().length > 0 && filteredIssues().map((issue, index) => (
-                <IssueCard
-                  key={issue._id}
-                  _id={issue._id}
-                  title={issue.title}
-                  description={issue.description}
-                  createdAt={issue.createdAt}
-                  index={index}
-                  rank={issue.rank}
-                />
-              ))}
-              {provided.placeholder}
-              <IssueAdd status={status} />
+              <Suspense fallback={<div>...Loading</div>}>
+                {filteredIssues().length > 0 && filteredIssues().map((issue, index) => (
+                  <IssueCard
+                    key={issue._id}
+                    _id={issue._id}
+                    title={issue.title}
+                    description={issue.description}
+                    createdAt={issue.createdAt}
+                    index={index}
+                    rank={issue.rank}
+                  />
+                ))}
+                {provided.placeholder}
+                <IssueAdd status={status} />
+              </Suspense>
             </div>
           )}
         </Droppable>

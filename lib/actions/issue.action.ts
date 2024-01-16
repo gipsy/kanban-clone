@@ -18,8 +18,10 @@ export async function getIssues(params: GetIssuesParams) {
   try {
     await connectToDatabase()
 
+    const { boardId } = params
+
     const issues = await Issue.find({})
-      .sort({ createdAt: -1 })
+      // .sort({ createdAt: -1 })
 
     console.log('getIssues', issues)
 
@@ -36,7 +38,7 @@ export async function getIssue(params: GetIssueByIdParams) {
 
     const { _id } = params
 
-    const issue = await Issue.findOne({_id}).exec()
+    const issue = await Issue.findOne({_id})
 
     console.log('getIssue', issue)
     return { issue }
@@ -67,7 +69,7 @@ export async function createIssue(params: CreateIssueParams) {
         $push: {
           issues: {
             _id: issue._id,
-            // title: issue.title,
+            title: issue.title,
             // description: issue.description,
             // status: issue.status,
             // rank: issue.rank,
@@ -76,12 +78,14 @@ export async function createIssue(params: CreateIssueParams) {
         }
       })
 
-    console.log('issue', issue)
+    // console.log('CREATE_ISSUE', issue)
 
-    return { issue }
-    // revalidatePath(path)
+    const serializedResponse = JSON.parse(JSON.stringify(issue))
+    revalidatePath(path)
+    return { response: serializedResponse }
   } catch (error) {
     console.log(error)
+    throw error
   }
 }
 
@@ -100,15 +104,22 @@ export async function updateIssue(params: UpdateIssueParams) {
       ...(boardId && {boardId}),
     }
 
-    const issue = await Issue.findOneAndUpdate({_id}, replacement, {
+    const data = await Issue.findOneAndUpdate({_id}, replacement, {
       new: true,
       upsert: true,
       includeResultMetadata: true
     })
 
-    return { issue }
+    console.log('DATA', data)
+    if (!data.ok) {
+      return { error: true, message: 'Update was not successfull' }
+    } 
+
+    const serializedResponse = JSON.parse(JSON.stringify(data.value))
+    return { response: serializedResponse }
   } catch (error) {
     console.log(error)
+    throw error
   }
 }
 
@@ -116,12 +127,29 @@ export async function deleteIssue(params: DeleteIssueParams) {
   try {
     await connectToDatabase()
 
-    const { _id } = params
+    const { _id, boardId } = params
 
     console.log('PARAMS', params)
     const issue = await Issue.findOneAndDelete({_id})
     console.log('DELETED_ISSUE', issue)
+
+    const board = await Board.findByIdAndUpdate(
+      boardId,
+      {
+        $pullAll: {
+          issues: [
+            {"_id": _id},
+            // title: issue.title,
+            // description: issue.description,
+            // status: issue.status,
+            // rank: issue.rank,
+            // createdAt: issue.createdAt
+          ]
+        }
+      })
+    // console.log('BOARD', board)
   } catch (error) {
     console.log(error)
+    throw error
   }
 }

@@ -3,36 +3,35 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import BoardColumn from "@/components/boards/BoardColumn"
 import { useBoard } from "@/context/BoardProvider"
-// import { getBoardById } from "@/lib/actions/board.action"
-// import { getIssues } from "@/lib/actions/issue.action"
-// import { IIssue } from '@/database/issue.model'
+import { IIssue } from '@/database/issue.model'
 import { DragDropContext, DropResult, 
   DragStart, DragUpdate, DroppableId
 } from 'react-beautiful-dnd'
 import {
   createSortablePayloadByIndex, 
-  // defaultItems, 
   getBetweenRankAsc, 
   sortByLexoRankAsc
 } from "@/lib/utils"
-import { updateIssue } from '@/lib/actions/issue.action'
 
 interface BoardMainProps {
   boardId: string;
-  // getIssues: () => void;
+  updateIssue: (params: IIssue) => Promise<void>
+  issues: IIssue[]
 }
 
 const BoardMainProps = ({
   boardId,
-  getIssues
+  issues,
+  updateIssue
 }: BoardMainProps) => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const { state, dispatch } = useBoard()
 
   useEffect(() => {
-    getIssues(boardId).then((response) => {
-      const sorted = response.issues.sort(sortByLexoRankAsc)
-      dispatch({type: 'SET_ISSUES', payload: response })
+    const sorted = issues.sort(sortByLexoRankAsc)
+    dispatch({
+      type: 'SET_ISSUES', 
+      payload: { issues: sorted } 
     })
   }, [boardId])
 
@@ -61,22 +60,20 @@ const BoardMainProps = ({
     newItems[currIndex] = {
       ...newItems[currIndex], 
       rank: newRank.toString(), 
-      status: destination.droppableId
-    } as DroppableId
+      status: destination?.droppableId
+    } as IIssue
 
-    // 4. save item
-    console.log('NEWITEMS', JSON.stringify(newItems[currIndex]))
-    await updateIssue(newItems[currIndex])
-    // getIssues(boardId).then((response) => {
-    //   const sorted = response.issues.sort(sortByLexoRankAsc)
-    //   dispatch({type: 'SET_ISSUES', payload: response })
-    // })
-
-    // 5. sort by rank
+    // 4. set state & save item
     dispatch({
-      type: 'SORT_ISSUES', 
-      payload: {issues: newItems.sort(sortByLexoRankAsc)}
+      type: 'SET_ISSUES', 
+      payload: { issues: newItems }
     })
+
+    try {
+      await updateIssue(newItems[currIndex])
+    } catch (error) {
+      console.log(error)
+    }
 
     setActiveId(null)
   }

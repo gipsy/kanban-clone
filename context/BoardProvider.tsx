@@ -30,19 +30,21 @@ const reducer = (state, action) => {
     case "ADD_ISSUE":
       console.log('ADD_ISSUE')
       console.log('ACTION.PAYLOAD', action.payload)
+      console.log({ ...state, issues: [...state.issues, action.payload] })
       return { ...state, issues: [...state.issues, action.payload] }
-
-    case "DELETE_ISSUE":
-      console.log('DELETE_ISSUE')
-      return { ...state, issues: state.issues.filter((issue, index) => 
-        issue._id !== action.payload.id)
-      }
 
     case "UPDATE_ISSUE":
       console.log('UPDATE_ISSUE', action.payload)
-      const updatedIssue = state.issues.map((issue, index) => 
+      const updatedIssue = state.issues.map((issue) => 
         issue._id === action.payload._id ? action.payload : issue)
       return { ...state, issues: updatedIssue }
+
+    case "DELETE_ISSUE":
+      console.log('DELETE_ISSUE', action.payload)
+      const { _id } = action.payload
+      return { ...state, issues: state.issues.filter((issue) => 
+        issue._id !== _id)
+      }
 
     case "SET_EDITED_ISSUE":
       console.log('SET_EDITED_ISSUE')
@@ -55,6 +57,10 @@ const reducer = (state, action) => {
       console.log('action', action)
       const fetchedIssues = action.payload.issues || []
       return { ...state, issues: fetchedIssues }
+
+    case "FILTER_ISSUES":
+      const filteredIssues = action.payload.issues || []
+      return { ...state, issues: filteredIssues }
 
     case "SORT_ISSUES":
       console.log('SORT_ISSUES')

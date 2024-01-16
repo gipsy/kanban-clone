@@ -84,7 +84,11 @@ const CreateModal = ({
 
   function onCancelHandler(e) {
     e.preventDefault()
-    router.replace(`/board/${params.id}`, undefined, { shallow: true })
+    if (params.id) {
+      router.replace(`/board/${params.id}`, undefined, { shallow: true })
+    } else {
+      router.replace('/board', undefined, { shallow: true })
+    }
   }
 
   async function onSubmit(values: z.infer<typeof BoardsOrIssuesSchema>) {
@@ -98,6 +102,7 @@ const CreateModal = ({
           issues: [],
           path: pathname
         })
+        router.replace('/board', undefined, { shallow: true })
       } else {
         if (type === 'create') {
           console.log('CREATE')
@@ -107,10 +112,11 @@ const CreateModal = ({
           const entityRank = latestEntity 
             ? LexoRank.parse(latestEntity.rank).genNext()
             : LexoRank.middle()
+
           const payload = {
             title: values.title,
             description: values.description,
-            status: searchParams.get('status'),
+            status: searchParams.get('status') || 'to-do',
             rank: entityRank.toString(),
             boardId: JSON.parse(boardId),
             // createdAt: state.currentIssue.createdAt,
@@ -119,8 +125,17 @@ const CreateModal = ({
 
           console.log('CREATE_BOARD', payload)
           console.log('searchParams', searchParams)
-          const { issue } = await createIssue(payload)
-          dispatch({type: 'ADD_ISSUE', payload: issue})
+          
+          try {
+            const { response } = await createIssue(payload)
+            dispatch({
+              type: 'ADD_ISSUE', 
+              payload: response
+            })
+            console.log('UPDATED_ISSUE', state.issues)
+          } catch (error) {
+            console.log(error)
+          }
         } else {
           const payload = {
             _id: issueId,
@@ -130,8 +145,16 @@ const CreateModal = ({
             // createdAt: state.currentIssue.createdAt,
             path: pathname
           }
-          const { issue } = await updateIssue(payload)
-          dispatch({type: 'UPDATE_ISSUE', payload: issue})
+
+          try {
+            const { response } = await updateIssue(payload)
+            dispatch({
+              type: 'UPDATE_ISSUE', 
+              payload: response
+            })
+          } catch (error) {
+            console.log(error)
+          }
         }
         router.replace(`/board/${params.id}`, undefined, { shallow: true })
       }

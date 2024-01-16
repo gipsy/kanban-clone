@@ -4,8 +4,9 @@ import { useBoard }     from "@/context/BoardProvider"
 import { useRouter }    from "next/navigation"
 import { styled }       from "styled-components"
 import { Draggable }    from "react-beautiful-dnd"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import Image            from "next/image"
+import { Button }       from "@/components/ui/button"
+import { useParams }    from "next/navigation"
 import { 
   getIssue,
   deleteIssue
@@ -30,16 +31,27 @@ const IssueCard = ({
 }: IssueProps) => {
   const { state, dispatch } = useBoard()
   const router = useRouter()
+  const params = useParams()
 
-  const onEditIssueHandler = async (id) => {
-    const issue = state.issues.find(issue => issue._id === id)
-    router.push(`?modal=true&id=${id}`)
-    dispatch({type: 'SET_EDITED_ISSUE', payload: {issue}})
+  const onEditIssueHandler = async () => {
+    const issue = state.issues.find(issue => issue._id === _id)
+    router.push(`?modal=true&id=${_id}`)
+    dispatch({
+      type: 'SET_EDITED_ISSUE', 
+      payload: { issue }
+    })
   }
 
-  const onDeleteIssueHandler = async (id) => {
-    await deleteIssue({_id: id})
-    dispatch({type: 'DELETE_ISSUE', payload: {id}})
+  const onDeleteIssueHandler = async () => {
+    try {
+      await deleteIssue({_id, boardId: params.id})
+      dispatch({
+        type: 'DELETE_ISSUE', 
+        payload: { _id }
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -49,7 +61,7 @@ const IssueCard = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          isDragging={snapshot.isDragging}
+          // isDragging={snapshot.isDragging}
           className="card-wrapper
             rounded-[10px] py-2 sm:px-4
           "
@@ -60,7 +72,7 @@ const IssueCard = ({
             <p className="text-sm">{description}</p>
           </div>
           <div className="flex justify-items-center mt-5">
-            <div className="inline-flex justify-center flex-col text-xs flex-1 cursor-default">{getTimestamp(createdAt)}</div>
+            <div className="inline-flex justify-center flex-col text-xs flex-1 cursor-default">{getTimestamp(new Date(createdAt))}</div>
             <div className="flex-none">
               <div className="flex">
                 <Button
@@ -78,7 +90,7 @@ const IssueCard = ({
                 </Button>
                 <Button
                   onClick={
-                    () => onDeleteIssueHandler(_id)
+                    () => onDeleteIssueHandler()
                   }
                   className="p-1 w-7 h-7 hover:bg-light-700 dark:bg-dark-300 dark:hover:bg-dark-300"
                 >
