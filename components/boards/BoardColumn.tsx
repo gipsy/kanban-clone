@@ -1,7 +1,6 @@
 "use client"
 
-import React, { 
-  useState, Suspense }       from 'react'
+import React, { Suspense }   from 'react'
 import IssueCard             from "@/components/cards/IssueCard"
 import IssueAdd              from "@/components/cards/IssueAdd"
 import { useBoard }          from "@/context/BoardProvider"
@@ -12,24 +11,10 @@ interface BoardColumnProps {
   status: string
 }
 
-import styled from 'styled-components'
-const IssueList = styled.div`
-  // padding: 8px;
-  transition: background-color 0.2s ease;
-  // background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'white')};
-  flex-grow: 1;
-
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`
-
 const BoardColumn = ({
   status
 }: BoardColumnProps) => {
-  const { state, dispatch } = useBoard()
-  // console.log('dispatch', dispatch)
-  // console.log('state', state)
+  const { state } = useBoard()
 
   const filteredIssues = () => {
     switch (status) {
@@ -59,21 +44,11 @@ const BoardColumn = ({
 
         <Droppable 
           droppableId={status} 
-          // renderClone={(provided, snapshot, rubric) => (
-          //   <div
-          //     {...provided.draggableProps}
-          //     {...provided.dragHandleProps}
-          //     ref={provided.innerRef}
-          //   >
-          //     Item id: {filteredIssues()[rubric.source.index].id}
-          //   </div>
-          // )}
         >
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              // isDraggingOver={snapshot.isDraggingOver}
               className="flex flex-col gap-4"
             >
               <Suspense fallback={<div>...Loading</div>}>

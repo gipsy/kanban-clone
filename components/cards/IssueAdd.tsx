@@ -1,5 +1,4 @@
 import React from 'react'
-import { useBoard } from "@/context/BoardProvider"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -11,7 +10,6 @@ interface Props {
 const IssueAdd = ({
   status
 }: Props) => {
-  const { dispatch } = useBoard()
   return (
     <Link 
       href={`?modal=true&status=${status}`}

@@ -1,26 +1,27 @@
 import React            from 'react'
 import { getBoardById } from "@/lib/actions/board.action"
-import { getIssues,
-  updateIssue
- }                      from "@/lib/actions/issue.action"
+import { updateIssue }  from "@/lib/actions/issue.action"
 import { IBoard }       from "@/database/board.model"
 import BoardMain        from "@/components/boards/BoardMain"
 import NoResult         from "@/components/shared/NoResult"
 import CreateModal      from "@/components/shared/CreateModal"
 import LocalSearch      from "@/components/search/LocalSearch"
 
+interface BoardViewPageProps {
+  params: string;
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
 const Page = async ({
   params, searchParams
-}) => {
+}: BoardViewPageProps) => {
   const { id } = params
   const { q } = searchParams ?? { q: "" }
   const board: IBoard = await getBoardById({id, q})
 
   const { title, _id } = board
-  // const { issues } = await getIssues(_id)
 
   const showModal = searchParams.modal
-  const showCreateIssueModal = searchParams.issueModal
   const boardId = JSON.stringify(_id)
   const serializedIssues = JSON.parse(JSON.stringify(board.issues))
 

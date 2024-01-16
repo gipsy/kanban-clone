@@ -20,9 +20,8 @@ const BoardItem = ({
   issuesCount
 }: BoardProps) => {
 
-  const onDeleteBoardHandler = async (data) => {
+  const onDeleteBoardHandler = async () => {
     "use server"
-    const boardId = data.get('boardId')
     await deleteBoard({_id, path: '/board'})
   }
 

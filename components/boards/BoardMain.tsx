@@ -1,17 +1,14 @@
 "use client"
 
-import React, { useEffect, useState, useCallback } from 'react'
-import BoardColumn from "@/components/boards/BoardColumn"
-import { useBoard } from "@/context/BoardProvider"
-import { IIssue } from '@/database/issue.model'
-import { DragDropContext, DropResult, 
-  DragStart, DragUpdate, DroppableId
-} from 'react-beautiful-dnd'
+import React, { useEffect }            from 'react'
+import BoardColumn                     from "@/components/boards/BoardColumn"
+import { useBoard }                    from "@/context/BoardProvider"
+import { IIssue }                      from "@/database/issue.model"
+import { DragDropContext, DropResult } from "react-beautiful-dnd"
 import {
   createSortablePayloadByIndex, 
   getBetweenRankAsc, 
-  sortByLexoRankAsc
-} from "@/lib/utils"
+  sortByLexoRankAsc }                  from "@/lib/utils"
 
 interface BoardMainProps {
   boardId: string;
@@ -24,7 +21,6 @@ const BoardMainProps = ({
   issues,
   updateIssue
 }: BoardMainProps) => {
-  const [activeId, setActiveId] = useState<string | null>(null)
   const { state, dispatch } = useBoard()
 
   useEffect(() => {
@@ -35,20 +31,9 @@ const BoardMainProps = ({
     })
   }, [boardId, issues])
 
-  const onDragStartHandler = (event: DragStart) => {
-    console.log('onDragStart')
-    const { draggableId } = event
-    setActiveId(draggableId)
-  }
-
-  const onDragUpdateHandler = (event: DragUpdate) => {
-    // console.log('onDragUpdate', event)
-  }
-
   const onDragEndHandler = async (result: DropResult) => {
-    const { draggableId, source, destination } = result
+    const { destination } = result
     // 1. find prev, current, next items
-    const oldColItems = state.issues.filter(issue => issue.status === destination?.droppableId)
     const sortablePayload = createSortablePayloadByIndex(state.issues, result)
 
     // 2. calculate new rank
@@ -74,14 +59,10 @@ const BoardMainProps = ({
     } catch (error) {
       console.log(error)
     }
-
-    setActiveId(null)
   }
 
   return (
     <DragDropContext 
-      onDragStart={onDragStartHandler}
-      onDragUpdate={onDragUpdateHandler}
       onDragEnd={onDragEndHandler}
     >
       <div className="flex mb-4 h-screen">

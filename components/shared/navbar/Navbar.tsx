@@ -1,13 +1,11 @@
 "use client"
 
-import styles                   from "./navbar.module.css"
 import Link                     from "next/link"
 import Image                    from "next/image"
 import Theme                    from "@/components/shared/navbar/Theme"
 import MobileNav                from "@/components/shared/navbar/MobileNav"
 import GlobalSearch             from "@/components/search/GlobalSearch"
 
-import { Button }               from "@/components/ui/button"
 import { useParams } from "next/navigation"
 
 const Navbar = () => {

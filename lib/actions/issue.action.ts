@@ -5,7 +5,6 @@ import Issue                 from "@/database/issue.model";
 import Board                 from "@/database/board.model";
 
 import {
-  GetIssuesParams,
   GetIssueByIdParams,
   CreateIssueParams,
   UpdateIssueParams,
@@ -13,17 +12,12 @@ import {
 }                            from "./shared.types";
 import { revalidatePath }    from "next/cache";
 
-export async function getIssues(params: GetIssuesParams) {
-  console.log('params', params)
+export async function getIssues() {
   try {
     await connectToDatabase()
 
-    const { boardId } = params
-
     const issues = await Issue.find({})
       // .sort({ createdAt: -1 })
-
-    console.log('getIssues', issues)
 
     return { issues }
   } catch (error) {
@@ -90,11 +84,10 @@ export async function createIssue(params: CreateIssueParams) {
 }
 
 export async function updateIssue(params: UpdateIssueParams) {
-  console.log('updateIssue', params)
   try {
     await connectToDatabase()
 
-    const { _id, title, description, rank, status, boardId, path } = params
+    const { _id, title, description, rank, status, boardId } = params
 
     const replacement = {
       ...(title && {title}),
@@ -110,11 +103,6 @@ export async function updateIssue(params: UpdateIssueParams) {
       includeResultMetadata: true
     })
 
-    console.log('DATA', data)
-    if (!data.ok) {
-      return { error: true, message: 'Update was not successfull' }
-    } 
-
     const serializedResponse = JSON.parse(JSON.stringify(data.value))
     return { response: serializedResponse }
   } catch (error) {
@@ -129,11 +117,9 @@ export async function deleteIssue(params: DeleteIssueParams) {
 
     const { _id, boardId } = params
 
-    console.log('PARAMS', params)
-    const issue = await Issue.findOneAndDelete({_id})
-    console.log('DELETED_ISSUE', issue)
+    await Issue.findOneAndDelete({_id})
 
-    const board = await Board.findByIdAndUpdate(
+    await Board.findByIdAndUpdate(
       boardId,
       {
         $pullAll: {

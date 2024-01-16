@@ -1,10 +1,8 @@
 "use client"
 
-import React, { 
-  useState }                from "react"
+import React                from "react"
 import Image                from "next/image"
 import { Input }            from "@/components/ui/input"
-import { useBoard }         from "@/context/BoardProvider"
 import { 
   usePathname, 
   useSearchParams, 

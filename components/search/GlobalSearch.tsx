@@ -1,22 +1,13 @@
 "use client"
 
-import React, { 
-  useState, useEffect
-}                               from "react"
+import React                    from "react"
 import Image                    from "next/image"
 import { Input }                from "@/components/ui/input"
-import { Button }               from "@/components/ui/button"
 import { 
   usePathname, 
   useSearchParams, useRouter }  from "next/navigation"
 
-// interface GlobalSearchParams {
-//   searchParams?: { [key: string]: string | string[] | undefined };
-// }
-
-const GlobalSearch = ({
-  // searchParams
-}) => {
+const GlobalSearch = () => {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const { replace } = useRouter()

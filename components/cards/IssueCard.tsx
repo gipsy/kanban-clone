@@ -2,13 +2,11 @@ import React            from 'react'
 import { getTimestamp } from "@/lib/utils"
 import { useBoard }     from "@/context/BoardProvider"
 import { useRouter }    from "next/navigation"
-import { styled }       from "styled-components"
 import { Draggable }    from "react-beautiful-dnd"
 import Image            from "next/image"
 import { Button }       from "@/components/ui/button"
 import { useParams }    from "next/navigation"
 import { 
-  getIssue,
   deleteIssue
 } from '@/lib/actions/issue.action'
 
@@ -56,12 +54,11 @@ const IssueCard = ({
 
   return (
     <Draggable draggableId={_id} index={index}>
-      {(provided, snapshot) => (
+      {(provided) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          // isDragging={snapshot.isDragging}
           className="card-wrapper
             rounded-[10px] py-2 sm:px-4
           "

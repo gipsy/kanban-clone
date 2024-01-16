@@ -65,7 +65,7 @@ export async function createBoard(params: CreateBoardParams) {
 
     const { title, path } = params
 
-    const board = await Board.create({
+    await Board.create({
       title,
     })
 

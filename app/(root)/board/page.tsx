@@ -6,21 +6,15 @@ import Image                  from "next/image"
 import NoResult               from "@/components/shared/NoResult"
 import BoardItem              from "@/components/boards/BoardItem"
 import { Button }             from "@/components/ui/button"
-import {
-  getBoards,
-  // getBoardById
-}                             from "@/lib/actions/board.action"
-// import { GetIssuesParams }    from "@/lib/actions/shared.types"
+import { getBoards }          from "@/lib/actions/board.action"
 
-interface BoardPageProps {
-  params: string;
+interface BoardsPageProps {
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 const Page = async ({
-  params, 
   searchParams
-}: BoardPageProps) => {
+}: BoardsPageProps) => {
   const showModal = searchParams?.modal
   const { q } = searchParams ?? { q: "" }
   const boards = await getBoards({ q } as { q: string })

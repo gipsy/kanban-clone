@@ -4,14 +4,10 @@ import {
   Sheet,
   SheetTrigger,
   SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
   SheetClose
 }                    from "@/components/ui/sheet"
 import Link          from "next/link"
 import Image         from "next/image"
-import { Button }    from "@/components/ui/button"
 import { sidebarLinks } from "@/constants"
 import { usePathname } from "next/navigation"
 

@@ -1,9 +1,7 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { createPortal }       from "react-dom"
-import Link                   from "next/link"
-import { useTheme }           from '@/context/ThemeProvider'
 import { useBoard }           from "@/context/BoardProvider"
 import { Button }             from "@/components/ui/button"
 import { Input }              from "@/components/ui/input"
@@ -33,14 +31,6 @@ import {
   FormMessage,
 }                             from "@/components/ui/form"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-}                             from "@/components/ui/select"
-
 let type: string = 'create'
 
 interface Props {
@@ -53,7 +43,6 @@ const CreateModal = ({
   board,
   boardId
 }: Props) => {
-  const { mode } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
