@@ -45,7 +45,7 @@ const BoardColumn = ({
         <Droppable 
           droppableId={status} 
         >
-          {(provided, snapshot) => (
+          {(provided) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}

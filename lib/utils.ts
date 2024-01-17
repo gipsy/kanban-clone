@@ -1,10 +1,11 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { formatDistanceToNow } from "date-fns"
-import {IHasRank, IId, ISortablePayload} from "@/types"
+import { type ClassValue, clsx }        from "clsx"
+import { twMerge }                      from "tailwind-merge"
+import { formatDistanceToNow }          from "date-fns"
+import { IHasRank, ISortablePayload }   from "@/types"
+import { IIssue }                       from "@/database/issue.model"
 
-import {LexoRank} from "lexorank"
-import { DragUpdate } from "react-beautiful-dnd"
+import { LexoRank }                     from "lexorank"
+import { DragUpdate }                   from "react-beautiful-dnd"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -39,7 +40,8 @@ export function sortByLexoRankAsc(a: IHasRank, b: IHasRank): number {
   return a.rank.localeCompare(b.rank);
 };
 
-export function createSortablePayloadByIndex<TEntity extends IId & IHasRank>(items: TEntity[], event: DragUpdate): ISortablePayload<TEntity> {
+// export function createSortablePayloadByIndex<TEntity extends IId & IHasRank>(items: TEntity[], event: DragUpdate): ISortablePayload<TEntity> {
+export function createSortablePayloadByIndex(items: IIssue[], event: DragUpdate): ISortablePayload<IIssue> {
   const { draggableId, destination } = event
 
   const colItems = items.filter(item => item.status === destination?.droppableId)
@@ -57,15 +59,10 @@ export function createSortablePayloadByIndex<TEntity extends IId & IHasRank>(ite
     prevEntity = colItems[i]
   }
 
-  console.log('prevEntity', prevEntity)
-  console.log('nextEntity', nextEntity)
-  console.log('entity', entity)
-
   return { prevEntity, entity, nextEntity }
 }
 
-export function getBetweenRankAsc<TEntity extends IId & IHasRank>(payload: ISortablePayload<TEntity>): LexoRank {
-  console.log('getBetweenRankAsc', payload)
+export function getBetweenRankAsc(payload: ISortablePayload<IIssue>): LexoRank {
   const {prevEntity, entity, nextEntity} = payload
   let newLexoRank: LexoRank
   if (!prevEntity && !!nextEntity) {
@@ -78,7 +75,8 @@ export function getBetweenRankAsc<TEntity extends IId & IHasRank>(payload: ISort
     console.log('genBetween', LexoRank.parse(nextEntity.rank).between(LexoRank.parse(prevEntity.rank)))
     newLexoRank = LexoRank.parse(nextEntity.rank).between(LexoRank.parse(prevEntity.rank))
   } else {
-    newLexoRank = LexoRank.parse(entity.rank).genNext()
+    const entityRank = entity?.rank || ''
+    newLexoRank = LexoRank.parse(entityRank).genNext()
   }
 
   return newLexoRank

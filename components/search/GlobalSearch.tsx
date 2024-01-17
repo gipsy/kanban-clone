@@ -5,10 +5,13 @@ import Image                    from "next/image"
 import { Input }                from "@/components/ui/input"
 import { 
   usePathname, 
-  useSearchParams, useRouter }  from "next/navigation"
+  useSearchParams, useRouter, ReadonlyURLSearchParams }  from "next/navigation"
 
 const GlobalSearch = () => {
-  const searchParams = useSearchParams()
+  const useSearchParamsWithQ = useSearchParams as () => ReadonlyURLSearchParams & {
+    q: string;
+  }
+  const searchParams = useSearchParamsWithQ()
   const pathname = usePathname()
   const { replace } = useRouter()
   const { q: inputQuery } = searchParams ?? { q: "" }

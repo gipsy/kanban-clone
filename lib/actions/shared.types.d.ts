@@ -20,18 +20,19 @@ export interface CreateIssueParams {
   description: string;
   status: string;
   rank: string;
-  boardId: Schema.Types.ObjectId;
-  path?: string;
+  boardId?: Schema.Types.ObjectId;
+  path: string;
 }
 
 export interface UpdateIssueParams {
-  _id: string;
-  title: string;
-  description: string;
-  rank: string;
-  status: string;
-  boardId: Schema.Types.ObjectId;
-  path: string;
+  _id?: string | null;
+  title?: string;
+  description?: string;
+  rank?: string;
+  status?: string;
+  // boardId: Schema.Types.ObjectId;
+  boardId?: string;
+  path?: string;
 }
 
 export interface DeleteIssueParams {
@@ -51,10 +52,14 @@ export interface DeleteBoardParams {
 }
 
 export interface GetBoardByIdParams {
-  id: string;
-  q: string;
+  id: number;
+  q?: string | RegExp;
 }
 
 export interface GetBoardsParams {
-  q: string;
+  q?: string;
+}
+
+export interface UpdateIssueResponse {
+  response: string;
 }

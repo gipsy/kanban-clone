@@ -2,7 +2,6 @@ import { Schema, models, model, Document, Types } from 'mongoose'
 
 export interface IIssue extends Document {
   title: string;
-  // comments: [];
   status: string;
   rank: string;
   description: string;

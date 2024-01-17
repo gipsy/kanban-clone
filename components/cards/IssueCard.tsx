@@ -41,8 +41,9 @@ const IssueCard = ({
   }
 
   const onDeleteIssueHandler = async () => {
+    const boardId = params.id as string
     try {
-      await deleteIssue({_id, boardId: params.id})
+      await deleteIssue({_id, boardId})
       dispatch({
         type: 'DELETE_ISSUE', 
         payload: { _id }
@@ -74,7 +75,7 @@ const IssueCard = ({
               <div className="flex">
                 <Button
                   onClick={
-                    () => onEditIssueHandler(_id)
+                    () => onEditIssueHandler()
                   }
                   className="p-1 w-7 h-7 hover:bg-light-700 dark:bg-dark-300 dark:hover:bg-dark-300"
                 >

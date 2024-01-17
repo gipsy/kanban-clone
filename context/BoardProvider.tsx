@@ -1,70 +1,105 @@
 "use client"
 
 import React, { createContext, useContext,
-    useReducer }        from "react"
+    useReducer, Dispatch, Reducer }        from "react"
 
 import { IIssue }       from "@/database/issue.model"
-import { getIssueById } from "@/lib/actions/issue.action";
-import { useRouter }    from "next/navigation"
+import { TEntity } from "@/types"
 
-interface BoardContextType {
-   state: {
-    issues: IIssue[];
-    currentIssue: IIssue;
-   },
-   dispatch: () => void;
+enum ActionKind {
+  addIssue       = 'ADD_ISSUE',
+  updateIssue    = 'UPDATE_ISSUE',
+  deleteIssue    = 'DELETE_ISSUE',
+  setEditedIssue = 'SET_EDITED_ISSUE',
+  setIssues      = 'SET_ISSUES',
+  filterIssues   = 'FILTER_ISSUES',
+  sortIssues     = 'SORT_ISSUES'
 }
 
-const initialState = {
+type Action = {
+  type: ActionKind,
+  payload: {
+    _id?: string,
+    issue?: IIssue,
+    issues: IIssue[]
+  }
+}
+
+// type State = {
+//   issues: IIssue[];
+//   currentIssue: IIssue;
+// }
+type State = {
+  issues: IIssue[] | any[];
+  currentIssue?: IIssue | TEntity;
+  // currentIssue?: {
+  //   title: string;
+  //   status: string;
+  //   rank: string;
+  //   description: string;
+  //   boardId: string;
+  //   createdAt: string;
+  // };
+}
+
+interface BoardContextType {
+   state: State;
+  // state: {
+  //   issues: IIssue[];
+  //   currentIssue: {
+  //     title: string;
+  //     status: string;
+  //     rank: string;
+  //     description: string;
+  //     boardId: string;
+  //     createdAt: string;
+  //   };
+  // }
+  dispatch: Dispatch<any>;
+}
+
+const initialState: State = {
   issues: [],
   currentIssue: {
     title: '',
     status: '',
+    description: '',
+    rank: '',
     boardId: '',
-    createdAt: ''
+    // createdAt: ''
   }
 }
 
-const reducer = (state, action) => {
+const reducer = (state: State, action: Action) => {
+  console.log('STATE', state)
   switch (action.type) {
-    case "ADD_ISSUE":
-      console.log('ADD_ISSUE')
-      console.log('ACTION.PAYLOAD', action.payload)
-      console.log({ ...state, issues: [...state.issues, action.payload] })
+    case ActionKind.addIssue:
       return { ...state, issues: [...state.issues, action.payload] }
 
-    case "UPDATE_ISSUE":
-      console.log('UPDATE_ISSUE', action.payload)
-      const updatedIssue = state.issues.map((issue) => 
+    case ActionKind.updateIssue:
+      const updatedIssues = state.issues.map((issue) => 
         issue._id === action.payload._id ? action.payload : issue)
-      return { ...state, issues: updatedIssue }
+      return { ...state, issues: updatedIssues }
 
-    case "DELETE_ISSUE":
-      console.log('DELETE_ISSUE', action.payload)
+    case ActionKind.deleteIssue:
       const { _id } = action.payload
       return { ...state, issues: state.issues.filter((issue) => 
         issue._id !== _id)
       }
 
-    case "SET_EDITED_ISSUE":
-      console.log('SET_EDITED_ISSUE')
+    case ActionKind.setEditedIssue:
       const { issue } = action.payload
-      console.log('ISSUE', issue)
       return { ...state, currentIssue: issue }
 
-    case "SET_ISSUES":
-      console.log('SET_ISSUES')
-      console.log('action', action)
+    case ActionKind.setIssues:
       const fetchedIssues = action.payload.issues || []
       return { ...state, issues: fetchedIssues }
 
-    case "FILTER_ISSUES":
-      const filteredIssues = action.payload.issues || []
-      return { ...state, issues: filteredIssues }
+    case ActionKind.filterIssues:
+      const { issues } = action.payload ?? { issues: [] }
+      return { ...state, issues }
 
-    case "SORT_ISSUES":
-      console.log('SORT_ISSUES')
-      console.log('action.payload', action.payload)
+    case ActionKind.sortIssues:
       const sortedIssues = action.payload.issues || []
       return { ...state, issues: sortedIssues  }
 
@@ -74,15 +109,14 @@ const reducer = (state, action) => {
 }
 
 const BoardContext = createContext<BoardContextType | undefined>({
-  issues: initialState.issues,
-  currentIssue: initialState.currentIssue,
+  state: initialState,
   dispatch: () => null,
 })
 
 export function BoardProvider({ children }: {
   children: React.ReactNode
 }) {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer<Reducer<State, Action>>(reducer, initialState)
 
   return (
     <BoardContext.Provider value={{ state, dispatch }}>

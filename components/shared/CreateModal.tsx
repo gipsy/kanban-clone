@@ -1,6 +1,7 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, 
+  useEffect, MouseEvent }     from 'react'
 import { createPortal }       from "react-dom"
 import { useBoard }           from "@/context/BoardProvider"
 import { Button }             from "@/components/ui/button"
@@ -38,7 +39,6 @@ interface Props {
   boardId?: string;
 }
 
-// const CreateModal = ({ children }: React.PropsWithChildren) => {
 const CreateModal = ({
   board,
   boardId
@@ -65,24 +65,23 @@ const CreateModal = ({
   const form = useForm<z.infer<typeof BoardsOrIssuesSchema>>({
     resolver: zodResolver(BoardsOrIssuesSchema),
     defaultValues: {
-      title: issueId ? state.currentIssue.title : '',
-      description: issueId ? state.currentIssue.description : '',
-      status: issueId ? state.currentIssue.status : "to-do"
+      title: issueId ? state.currentIssue?.title : '',
+      description: issueId ? state.currentIssue?.description : '',
+      status: issueId ? state.currentIssue?.status : "to-do"
     }
   })
 
-  function onCancelHandler(e) {
+  function onCancelHandler(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     if (params.id) {
-      router.replace(`/board/${params.id}`, undefined, { shallow: true })
+      router.replace(`/board/${params.id}`, undefined)
     } else {
-      router.replace('/board', undefined, { shallow: true })
+      router.replace('/board', undefined)
     }
   }
 
   async function onSubmit(values: z.infer<typeof BoardsOrIssuesSchema>) {
     setIsSubmitting(true)
-    console.log('onSubmit')
 
     try {
       if (board) {
@@ -91,10 +90,9 @@ const CreateModal = ({
           issues: [],
           path: pathname
         })
-        router.replace('/board', undefined, { shallow: true })
+        router.replace('/board', undefined)
       } else {
         if (type === 'create') {
-          console.log('CREATE')
           const colIssues = state.issues.filter(issue => issue.status === searchParams.get('status'))
           const latestEntity = colIssues[colIssues.length-1]
 
@@ -107,13 +105,10 @@ const CreateModal = ({
             description: values.description,
             status: searchParams.get('status') || 'to-do',
             rank: entityRank.toString(),
-            boardId: JSON.parse(boardId),
+            ...(boardId && { boardId: JSON.parse(boardId) }),
             // createdAt: state.currentIssue.createdAt,
             path: pathname
           }
-
-          console.log('CREATE_BOARD', payload)
-          console.log('searchParams', searchParams)
           
           try {
             const { response } = await createIssue(payload)
@@ -121,7 +116,6 @@ const CreateModal = ({
               type: 'ADD_ISSUE', 
               payload: response
             })
-            console.log('UPDATED_ISSUE', state.issues)
           } catch (error) {
             console.log(error)
           }
@@ -130,7 +124,9 @@ const CreateModal = ({
             _id: issueId,
             title: values.title,
             description: values.description,
-            status: state.currentIssue.status,
+            status: state.currentIssue?.status,
+            rank: state.currentIssue?.rank,
+            ...(boardId && { boardId: JSON.parse(boardId) }),
             // createdAt: state.currentIssue.createdAt,
             path: pathname
           }
@@ -145,7 +141,7 @@ const CreateModal = ({
             console.log(error)
           }
         }
-        router.replace(`/board/${params.id}`, undefined, { shallow: true })
+        router.replace(`/board/${params.id}`, undefined)
       }
     } catch (error) {
       console.log(error)

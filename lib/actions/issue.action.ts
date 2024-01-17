@@ -1,16 +1,16 @@
 "use server"
 
-import { connectToDatabase } from "@/lib/mongoose";
-import Issue                 from "@/database/issue.model";
-import Board                 from "@/database/board.model";
+import { connectToDatabase } from "@/lib/mongoose"
+import Issue                 from "@/database/issue.model"
+import Board                 from "@/database/board.model"
 
 import {
   GetIssueByIdParams,
   CreateIssueParams,
-  UpdateIssueParams,
-  DeleteIssueParams
-}                            from "./shared.types";
-import { revalidatePath }    from "next/cache";
+  DeleteIssueParams,
+  UpdateIssueParams
+}                            from "./shared.types"
+import { revalidatePath }    from "next/cache"
 
 export async function getIssues() {
   try {
@@ -34,7 +34,6 @@ export async function getIssue(params: GetIssueByIdParams) {
 
     const issue = await Issue.findOne({_id})
 
-    console.log('getIssue', issue)
     return { issue }
   } catch (error) {
     console.log(error)
@@ -43,13 +42,12 @@ export async function getIssue(params: GetIssueByIdParams) {
 }
 
 export async function createIssue(params: CreateIssueParams) {
-  console.log('createIssue')
   try {
     await connectToDatabase()
 
     const { title, description, status, rank, boardId, path } = params
 
-    const issue = await Issue.create({
+    const data = await Issue.create({
       title,
       description,
       status,
@@ -62,19 +60,13 @@ export async function createIssue(params: CreateIssueParams) {
       {
         $push: {
           issues: {
-            _id: issue._id,
-            title: issue.title,
-            // description: issue.description,
-            // status: issue.status,
-            // rank: issue.rank,
-            // createdAt: issue.createdAt
+            _id: data._id,
+            title: data.title,
           }
         }
       })
 
-    // console.log('CREATE_ISSUE', issue)
-
-    const serializedResponse = JSON.parse(JSON.stringify(issue))
+    const serializedResponse = JSON.parse(JSON.stringify(data))
     revalidatePath(path)
     return { response: serializedResponse }
   } catch (error) {
@@ -97,12 +89,12 @@ export async function updateIssue(params: UpdateIssueParams) {
       ...(boardId && {boardId}),
     }
 
-    const data = await Issue.findOneAndUpdate({_id}, replacement, {
+    const data = await Issue.findOneAndUpdate({_id}, replacement, 
+    {
       new: true,
       upsert: true,
       includeResultMetadata: true
     })
-
     const serializedResponse = JSON.parse(JSON.stringify(data.value))
     return { response: serializedResponse }
   } catch (error) {
@@ -125,15 +117,9 @@ export async function deleteIssue(params: DeleteIssueParams) {
         $pullAll: {
           issues: [
             {"_id": _id},
-            // title: issue.title,
-            // description: issue.description,
-            // status: issue.status,
-            // rank: issue.rank,
-            // createdAt: issue.createdAt
           ]
         }
       })
-    // console.log('BOARD', board)
   } catch (error) {
     console.log(error)
     throw error

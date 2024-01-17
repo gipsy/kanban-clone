@@ -6,26 +6,26 @@ import { Input }            from "@/components/ui/input"
 import { 
   usePathname, 
   useSearchParams, 
-  useRouter }               from "next/navigation"
+  useRouter, 
+  ReadonlyURLSearchParams}  from "next/navigation"
 
 interface CustomInputProps {
-  route: string;
   iconPosition: string;
   imgSrc: string;
   placeholder?: string;
   otherClasses?: string;
-  issues: string;
 }
 
 const LocalSearch = ({
-  // route,
   iconPosition,
   imgSrc,
   placeholder,
   otherClasses,
-  // issues
 }: CustomInputProps) => {
-  const searchParams = useSearchParams()
+  const useSearchParamsWithQ = useSearchParams as () => ReadonlyURLSearchParams & {
+    q: string;
+  }
+  const searchParams = useSearchParamsWithQ()
   const pathname = usePathname()
   const { replace } = useRouter()
   const { q: inputQuery } = searchParams ?? { q: "" }

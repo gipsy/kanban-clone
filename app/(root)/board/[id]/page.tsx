@@ -8,8 +8,8 @@ import CreateModal      from "@/components/shared/CreateModal"
 import LocalSearch      from "@/components/search/LocalSearch"
 
 interface BoardViewPageProps {
-  params: string;
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: {id: number};
+  searchParams?: { [key: string]: string | RegExp };
 }
 
 const Page = async ({
@@ -21,7 +21,7 @@ const Page = async ({
 
   const { title, _id } = board
 
-  const showModal = searchParams.modal
+  const showModal = searchParams?.modal
   const boardId = JSON.stringify(_id)
   const serializedIssues = JSON.parse(JSON.stringify(board.issues))
 
@@ -33,7 +33,6 @@ const Page = async ({
         iconPosition="left"
         imgSrc="/assets/icons/search.svg"
         placeholder="Search issues by id or name"
-        issues={serializedIssues}
       />
       {board.issues.length > 0 
         ? (
