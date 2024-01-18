@@ -1,6 +1,6 @@
 import React            from 'react'
 import { getTimestamp } from "@/lib/utils"
-import { useBoard }     from "@/context/BoardProvider"
+import { ActionKind, useBoard }     from "@/context/BoardProvider"
 import { useRouter }    from "next/navigation"
 import { Draggable }    from "react-beautiful-dnd"
 import Image            from "next/image"
@@ -33,11 +33,11 @@ const IssueCard = ({
 
   const onEditIssueHandler = async () => {
     const issue = state.issues.find(issue => issue._id === _id)
-    router.push(`?modal=true&id=${_id}`)
     dispatch({
-      type: 'SET_EDITED_ISSUE', 
+      type: ActionKind.setEditedIssueAction,
       payload: { issue }
     })
+    router.replace(`?modal=true&id=${_id}`)
   }
 
   const onDeleteIssueHandler = async () => {
@@ -45,7 +45,7 @@ const IssueCard = ({
     try {
       await deleteIssue({_id, boardId})
       dispatch({
-        type: 'DELETE_ISSUE', 
+        type: ActionKind.deleteIssueAction,
         payload: { _id }
       })
     } catch (error) {

@@ -20,8 +20,8 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'DevFlow',
-  description: 'A community-driven platform for asking and answering programming questions.',
+  title: 'KanbanClone',
+  description: 'Kanban Clone based on Next14 and MongoDB',
   icons: {
     'icon': '/assets/images/site-logo.svg'
   }

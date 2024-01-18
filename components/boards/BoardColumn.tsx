@@ -23,10 +23,12 @@ const BoardColumn = ({
           issue.status === 'to-do').sort(sortByLexoRankAsc)
         break;
       case 'in-progress':
-        return state.issues.filter(issue => issue.status === 'in-progress').sort(sortByLexoRankAsc)
+        return state.issues.filter(issue => 
+          issue.status === 'in-progress').sort(sortByLexoRankAsc)
         break;
       case 'done':
-        return state.issues.filter(issue => issue.status === 'done').sort(sortByLexoRankAsc)
+        return state.issues.filter(issue => 
+          issue.status === 'done').sort(sortByLexoRankAsc)
         break;
       default:
         return []

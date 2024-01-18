@@ -2,14 +2,15 @@
 
 import Link                     from "next/link"
 import Image                    from "next/image"
-import Theme                    from "@/components/shared/navbar/Theme"
 import MobileNav                from "@/components/shared/navbar/MobileNav"
 import GlobalSearch             from "@/components/search/GlobalSearch"
 
-import { useParams } from "next/navigation"
+import { useParams, 
+  usePathname }                 from "next/navigation"
 
 const Navbar = () => {
   const params = useParams()
+  const pathname = usePathname()
   return (
     <nav className="flex-between
       background-light900_dark200 fixed z-50
@@ -30,11 +31,9 @@ const Navbar = () => {
       </Link>
       
       
-      {!params.id && <GlobalSearch /> }
+      {!params.id && pathname.includes('/board') && <GlobalSearch /> }
 
       <div className="flex-between gap-5">
-        
-        <Theme />
         
         <MobileNav/>
         

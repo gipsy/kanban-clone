@@ -2,7 +2,7 @@
 
 import React, { useEffect }            from 'react'
 import BoardColumn                     from "@/components/boards/BoardColumn"
-import { useBoard }                    from "@/context/BoardProvider"
+import { ActionKind, useBoard }                    from "@/context/BoardProvider"
 import { IIssue }                      from "@/database/issue.model"
 import { DragDropContext, DropResult } from "react-beautiful-dnd"
 import {
@@ -31,16 +31,15 @@ const BoardMainProps = ({
   useEffect(() => {
     const sorted = issues.sort(sortByLexoRankAsc)
     dispatch({
-      type: 'SET_ISSUES', 
+      type: ActionKind.setIssuesAction,
       payload: { issues: sorted } 
     })
   }, [boardId, issues])
 
   const onDragEndHandler = async (result: DropResult) => {
+    console.log('react-beautiful-dnd', result)
     const { destination } = result
     // 1. find prev, current, next items
-    // const entityIssues = state.issues as unknown as TEntity[]
-    // const entityIssues = state.issues as unknown as IIssue[]
     const sortablePayload = createSortablePayloadByIndex(state.issues, result)
 
     // 2. calculate new rank
@@ -57,7 +56,7 @@ const BoardMainProps = ({
 
     // 4. set state & save item
     dispatch({
-      type: 'SET_ISSUES', 
+      type: ActionKind.setIssuesAction,
       payload: { issues: newItems }
     })
 

@@ -47,7 +47,7 @@ const GlobalSearch = () => {
         />
         <Input
           type="text"
-          placeholder="Search boards by title"
+          placeholder="Search boards by title name"
           value={inputQuery}
           className="
             paragraph-regular

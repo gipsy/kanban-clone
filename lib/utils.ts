@@ -40,7 +40,6 @@ export function sortByLexoRankAsc(a: IHasRank, b: IHasRank): number {
   return a.rank.localeCompare(b.rank);
 };
 
-// export function createSortablePayloadByIndex<TEntity extends IId & IHasRank>(items: TEntity[], event: DragUpdate): ISortablePayload<TEntity> {
 export function createSortablePayloadByIndex(items: IIssue[], event: DragUpdate): ISortablePayload<IIssue> {
   const { draggableId, destination } = event
 

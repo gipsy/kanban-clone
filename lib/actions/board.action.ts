@@ -1,8 +1,8 @@
 "use server"
 
 import { connectToDatabase } from "@/lib/mongoose"
-import Board, { IBoard }                 from "@/database/board.model"
-import Issue, { IIssue }                 from "@/database/issue.model"
+import Board, { IBoard }     from "@/database/board.model"
+import Issue, { IIssue }     from "@/database/issue.model"
 
 import {
   GetBoardByIdParams,
@@ -24,7 +24,6 @@ export async function getBoards(params: GetBoardsParams) {
         ...(q && { title: { $regex: new RegExp(q, "i") }})
       })
 
-    console.log('Boards', boards)
     if (!boards) {
       return []
     }
@@ -50,7 +49,6 @@ export async function getBoardById(params: GetBoardByIdParams) {
         ...(q && {match: { title: new RegExp(q, "i") }}),
       })
 
-    console.log('board', board)
     return board
   } catch (error) {
     console.log(error)
@@ -67,7 +65,6 @@ export async function createBoard(params: CreateBoardParams) {
     await Board.create({
       title,
     })
-
 
     revalidatePath(path)
   } catch (error) {

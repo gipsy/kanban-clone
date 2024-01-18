@@ -3,7 +3,9 @@
 import React, { useState, 
   useEffect, MouseEvent }     from 'react'
 import { createPortal }       from "react-dom"
-import { useBoard }           from "@/context/BoardProvider"
+import { useBoard, 
+  ActionKind, 
+  initialState}                from "@/context/BoardProvider"
 import { Button }             from "@/components/ui/button"
 import { Input }              from "@/components/ui/input"
 import { Textarea }           from "@/components/ui/textarea"
@@ -78,6 +80,10 @@ const CreateModal = ({
     } else {
       router.replace('/board', undefined)
     }
+    dispatch({
+      type: ActionKind.updateIssueAction,
+      payload: initialState.currentIssue
+    })
   }
 
   async function onSubmit(values: z.infer<typeof BoardsOrIssuesSchema>) {
@@ -106,14 +112,13 @@ const CreateModal = ({
             status: searchParams.get('status') || 'to-do',
             rank: entityRank.toString(),
             ...(boardId && { boardId: JSON.parse(boardId) }),
-            // createdAt: state.currentIssue.createdAt,
             path: pathname
           }
           
           try {
             const { response } = await createIssue(payload)
             dispatch({
-              type: 'ADD_ISSUE', 
+              type: ActionKind.addIssueAction,
               payload: response
             })
           } catch (error) {
@@ -127,14 +132,13 @@ const CreateModal = ({
             status: state.currentIssue?.status,
             rank: state.currentIssue?.rank,
             ...(boardId && { boardId: JSON.parse(boardId) }),
-            // createdAt: state.currentIssue.createdAt,
             path: pathname
           }
 
           try {
             const { response } = await updateIssue(payload)
             dispatch({
-              type: 'UPDATE_ISSUE', 
+              type: ActionKind.updateIssueAction, 
               payload: response
             })
           } catch (error) {
@@ -219,60 +223,6 @@ const CreateModal = ({
                         )}
                       />
                     </div>}
-                    {/* {!board && <div className="mt-2">
-                      <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => (
-                          <FormItem className="flex w-full flex-col">
-                            <FormLabel className="paragraph-semibold text-dark400_light800">
-                              <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">
-                                Select status
-                              </h3>
-                            </FormLabel>
-                            <FormControl className="mt-3.5">
-                              <Select
-                                onValueChange={field.onChange} defaultValue={field.value}
-                                // onValueChange={(e) => handleSelectValueChange(e, field)}
-                              >
-                                <SelectTrigger 
-                                  className="no-focus paragraph-regular
-                                    background-light700_dark300 light-border-2
-                                    text-dark300_light700 min-h-[56px] border
-                                  "
-                                >
-                                  <SelectValue placeholder="To Do" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem 
-                                    className="no-focus paragraph-regular
-                                      background-light700_dark300 light-border-2
-                                      text-dark300_light700 min-h-[56px] border
-                                    "
-                                    value="to-do"
-                                  >To Do</SelectItem>
-                                  <SelectItem 
-                                    className="no-focus paragraph-regular
-                                      background-light700_dark300 light-border-2
-                                      text-dark300_light700 min-h-[56px] border
-                                    "
-                                    value="in-progress">In Progress</SelectItem>
-                                  <SelectItem 
-                                    className="no-focus paragraph-regular
-                                      background-light700_dark300 light-border-2
-                                      text-dark300_light700 min-h-[56px] border
-                                    "
-                                    value="done"
-                                  >Done</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormDescription></FormDescription>
-                            <FormMessage className="text-red-500" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>} */}
                   </div>
                 </div>
               </div>

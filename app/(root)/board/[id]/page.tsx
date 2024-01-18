@@ -32,7 +32,7 @@ const Page = async ({
       <LocalSearch 
         iconPosition="left"
         imgSrc="/assets/icons/search.svg"
-        placeholder="Search issues by id or name"
+        placeholder="Search issues by title name"
       />
       {board.issues.length > 0 
         ? (

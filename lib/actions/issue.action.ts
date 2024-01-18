@@ -17,7 +17,7 @@ export async function getIssues() {
     await connectToDatabase()
 
     const issues = await Issue.find({})
-      // .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 })
 
     return { issues }
   } catch (error) {
@@ -79,7 +79,7 @@ export async function updateIssue(params: UpdateIssueParams) {
   try {
     await connectToDatabase()
 
-    const { _id, title, description, rank, status, boardId } = params
+    const { _id, title, description, rank, status, boardId, path } = params
 
     const replacement = {
       ...(title && {title}),
@@ -96,6 +96,7 @@ export async function updateIssue(params: UpdateIssueParams) {
       includeResultMetadata: true
     })
     const serializedResponse = JSON.parse(JSON.stringify(data.value))
+    revalidatePath(path)
     return { response: serializedResponse }
   } catch (error) {
     console.log(error)

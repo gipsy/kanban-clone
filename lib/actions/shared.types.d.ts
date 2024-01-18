@@ -32,7 +32,7 @@ export interface UpdateIssueParams {
   status?: string;
   // boardId: Schema.Types.ObjectId;
   boardId?: string;
-  path?: string;
+  path: string;
 }
 
 export interface DeleteIssueParams {
