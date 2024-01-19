@@ -65,13 +65,10 @@ export function getBetweenRankAsc(payload: ISortablePayload<IIssue>): LexoRank {
   const {prevEntity, entity, nextEntity} = payload
   let newLexoRank: LexoRank
   if (!prevEntity && !!nextEntity) {
-    console.log('genPrev', LexoRank.parse(nextEntity.rank).genPrev())
     newLexoRank = LexoRank.parse(nextEntity.rank).genPrev()
   } else if (!nextEntity && !!prevEntity) {
-    console.log('genNext', LexoRank.parse(prevEntity.rank).genNext)
     newLexoRank = LexoRank.parse(prevEntity.rank).genNext()
   } else if (!!prevEntity && !!nextEntity) {
-    console.log('genBetween', LexoRank.parse(nextEntity.rank).between(LexoRank.parse(prevEntity.rank)))
     newLexoRank = LexoRank.parse(nextEntity.rank).between(LexoRank.parse(prevEntity.rank))
   } else {
     const entityRank = entity?.rank || ''

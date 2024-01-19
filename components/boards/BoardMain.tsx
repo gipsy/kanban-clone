@@ -12,8 +12,9 @@ import {
 import { 
   UpdateIssueParams, 
   UpdateIssueResponse 
-}         from '@/lib/actions/shared.types'
-import { TEntity } from '@/types'
+}                                     from "@/lib/actions/shared.types"
+import { TEntity }                    from "@/types"
+import { usePathname }                from "next/navigation"
 
 interface BoardMainProps {
   boardId: string;
@@ -27,6 +28,7 @@ const BoardMainProps = ({
   updateIssue
 }: BoardMainProps) => {
   const { state, dispatch } = useBoard()
+  const pathname = usePathname()
 
   useEffect(() => {
     const sorted = issues.sort(sortByLexoRankAsc)
@@ -37,7 +39,6 @@ const BoardMainProps = ({
   }, [boardId, issues])
 
   const onDragEndHandler = async (result: DropResult) => {
-    console.log('react-beautiful-dnd', result)
     const { destination } = result
     // 1. find prev, current, next items
     const sortablePayload = createSortablePayloadByIndex(state.issues, result)
@@ -51,7 +52,7 @@ const BoardMainProps = ({
     newItems[currIndex] = {
       ...newItems[currIndex],
       rank: newRank.toString(),
-      status: destination?.droppableId
+      status: destination?.droppableId,
     } as TEntity
 
     // 4. set state & save item
@@ -60,10 +61,13 @@ const BoardMainProps = ({
       payload: { issues: newItems }
     })
 
-    console.log('NEW ITEMS', newItems[currIndex])
+    const payload = {
+      ...newItems[currIndex],
+      path: pathname
+    }
 
     try {
-      await updateIssue(newItems[currIndex])
+      await updateIssue(payload)
     } catch (error) {
       console.log(error)
     }

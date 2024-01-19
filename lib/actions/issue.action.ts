@@ -76,6 +76,7 @@ export async function createIssue(params: CreateIssueParams) {
 }
 
 export async function updateIssue(params: UpdateIssueParams) {
+  console.log('UPDATE')
   try {
     await connectToDatabase()
 
@@ -96,6 +97,7 @@ export async function updateIssue(params: UpdateIssueParams) {
       includeResultMetadata: true
     })
     const serializedResponse = JSON.parse(JSON.stringify(data.value))
+    console.log('PATH', path)
     revalidatePath(path)
     return { response: serializedResponse }
   } catch (error) {
