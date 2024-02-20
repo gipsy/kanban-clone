@@ -108,7 +108,7 @@ export async function deleteIssue(params: DeleteIssueParams) {
   try {
     await connectToDatabase()
 
-    const { _id, boardId } = params
+    const { _id, boardId, path } = params
 
     await Issue.findOneAndDelete({_id})
 
@@ -121,6 +121,7 @@ export async function deleteIssue(params: DeleteIssueParams) {
           ]
         }
       })
+    revalidatePath(path)
   } catch (error) {
     console.log(error)
     throw error

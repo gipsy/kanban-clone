@@ -18,7 +18,6 @@ const IssueSchema = new Schema<IIssue>({
   createdAt: {type: Date, default: Date.now}
 })
 
-
 const Issue = models.Issue || model('Issue', IssueSchema)
 
 export default Issue

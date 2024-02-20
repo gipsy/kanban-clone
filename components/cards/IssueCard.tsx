@@ -45,7 +45,7 @@ const IssueCard = ({
   const onDeleteIssueHandler = async () => {
     const boardId = params.id as string
     try {
-      await deleteIssue({_id, boardId})
+      await deleteIssue({_id, boardId, path: '/'})
       dispatch({
         type: ActionKind.deleteIssueAction,
         payload: { _id }

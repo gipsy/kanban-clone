@@ -38,6 +38,7 @@ export interface UpdateIssueParams {
 export interface DeleteIssueParams {
   _id: string;
   boardId: string;
+  path: string;
 }
 
 export interface CreateBoardParams {
