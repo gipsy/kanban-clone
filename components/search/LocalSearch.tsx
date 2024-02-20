@@ -3,6 +3,7 @@
 import React                from "react"
 import Image                from "next/image"
 import { Input }            from "@/components/ui/input"
+import debounce             from "lodash/debounce"
 import { 
   usePathname, 
   useSearchParams, 
@@ -30,7 +31,7 @@ const LocalSearch = ({
   const { replace } = useRouter()
   const { q: inputQuery } = searchParams ?? { q: "" }
 
-  const onChangeHandler = (term: string) => {
+  const onChangeHandler = debounce(async (term: string) => {
     const params = new URLSearchParams(searchParams)
 
     if (term) {
@@ -39,8 +40,8 @@ const LocalSearch = ({
       params.delete('q')
     }
 
-    replace(`${pathname}?${params.toString()}`)
-  }
+    await replace(`${pathname}?${params.toString()}`)
+  }, 1000)
 
   return (
     <div

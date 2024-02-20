@@ -4,7 +4,6 @@ import React, { createContext, useContext,
     useReducer, Dispatch, Reducer }        from "react"
 
 import { IIssue }       from "@/database/issue.model"
-import { TEntity } from "@/types"
 
 export enum ActionKind {
   addIssueAction       = 'ADD_ISSUE',
@@ -12,27 +11,23 @@ export enum ActionKind {
   deleteIssueAction    = 'DELETE_ISSUE',
   setEditedIssueAction = 'SET_EDITED_ISSUE',
   setIssuesAction      = 'SET_ISSUES',
-  filterIssuesAction   = 'FILTER_ISSUES',
-  sortIssuesAction     = 'SORT_ISSUES',
 }
 
-type Action = {
-  type: ActionKind,
-  payload: {
-    _id?: string,
-    issue?: IIssue,
-    issues: IIssue[]
-  }
-}
+type Action = 
+  | { type: 'ADD_ISSUE', payload: { issue: IIssue } }
+  | { type: 'UPDATE_ISSUE', payload: { issue: IIssue } }
+  | { type: 'DELETE_ISSUE', payload: { _id: string } }
+  | { type: 'SET_EDITED_ISSUE', payload: { issue: IIssue } }
+  | { type: 'SET_ISSUES', payload: { issues: IIssue[] } }
 
 type State = {
-  issues: IIssue[] | any[];
-  currentIssue?: IIssue | TEntity;
+  issues: IIssue[];
+  currentIssue: IIssue;
 }
 
 interface BoardContextType {
-   state: State;
-  dispatch: Dispatch<any>;
+  state: State;
+  dispatch: Dispatch<Action>;
 }
 
 export const initialState: State = {
@@ -43,45 +38,45 @@ export const initialState: State = {
     description: '',
     rank: '',
     boardId: '',
-  }
+    createdAt: new Date()
+  } as IIssue
 }
 
-const reducer = (state: State, action: Action) => {
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case ActionKind.addIssueAction:
-      return { ...state, issues: [...state.issues, action.payload] }
+      const { issue: addedIssue } = action.payload
+      if (addedIssue) {
+        return { ...state, issues: [...state.issues, addedIssue] }
+      }
 
     case ActionKind.updateIssueAction:
-      const updatedIssues = state.issues.map((issue) => 
-        issue._id === action.payload._id ? action.payload : issue)
+      const updatedIssues = state.issues.map((issue) =>
+        issue._id === action.payload.issue?._id ? action.payload.issue : issue)
       return { ...state, issues: updatedIssues }
 
     case ActionKind.deleteIssueAction:
       const { _id } = action.payload
-      return { ...state, issues: state.issues.filter((issue) => 
-        issue._id !== _id)
+      return {
+        ...state, issues: state.issues.filter((issue) => issue._id !== _id)
       }
 
     case ActionKind.setEditedIssueAction:
-      const { issue } = action.payload
-      return { ...state, currentIssue: issue }
+      const { issue: currentIssue } = action.payload
+      if (currentIssue) {
+        return { ...state, currentIssue }
+      }
+      return state
 
     case ActionKind.setIssuesAction:
       const fetchedIssues = action.payload.issues || []
       return { ...state, issues: fetchedIssues }
 
-    case ActionKind.filterIssuesAction:
-      const { issues } = action.payload ?? { issues: [] }
-      return { ...state, issues }
-
-    case ActionKind.sortIssuesAction:
-      const sortedIssues = action.payload.issues || []
-      return { ...state, issues: sortedIssues  }
-
     default:
       return state;
   }
 }
+
 
 const BoardContext = createContext<BoardContextType | undefined>({
   state: initialState,

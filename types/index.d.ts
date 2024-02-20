@@ -37,9 +37,9 @@ export interface TEntity {
   description: string;
   rank: string;
   status: string;
-  // boardId: Schema.Types.ObjectId;
   boardId: string;
   path?: string;
+  createdAt: Date;
 }
 
 export interface ISortablePayload<TEntity> {

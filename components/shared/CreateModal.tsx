@@ -82,17 +82,18 @@ const CreateModal = ({
     }
     dispatch({
       type: ActionKind.updateIssueAction,
-      payload: initialState.currentIssue
+      payload: { issue: initialState.currentIssue }
     })
   }
 
   async function onSubmit(values: z.infer<typeof BoardsOrIssuesSchema>) {
     setIsSubmitting(true)
+    const { title, description } = values as { title: string, description: string }
 
     try {
       if (board) {
         await createBoard({
-          title: values.title,
+          title,
           issues: [],
           path: pathname
         })
@@ -107,8 +108,8 @@ const CreateModal = ({
             : LexoRank.middle()
 
           const payload = {
-            title: values.title,
-            description: values.description,
+            title,
+            description,
             status: searchParams.get('status') || 'to-do',
             rank: entityRank.toString(),
             ...(boardId && { boardId: JSON.parse(boardId) }),
@@ -119,7 +120,7 @@ const CreateModal = ({
             const { response } = await createIssue(payload)
             dispatch({
               type: ActionKind.addIssueAction,
-              payload: response
+              payload: { issue: response }
             })
           } catch (error) {
             console.log(error)
@@ -127,8 +128,8 @@ const CreateModal = ({
         } else {
           const payload = {
             _id: issueId,
-            title: values.title,
-            description: values.description,
+            title,
+            description,
             status: state.currentIssue?.status,
             rank: state.currentIssue?.rank,
             ...(boardId && { boardId: JSON.parse(boardId) }),

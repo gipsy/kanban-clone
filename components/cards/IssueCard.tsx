@@ -33,10 +33,12 @@ const IssueCard = ({
 
   const onEditIssueHandler = async () => {
     const issue = state.issues.find(issue => issue._id === _id)
-    dispatch({
-      type: ActionKind.setEditedIssueAction,
-      payload: { issue }
-    })
+    if (issue) {
+      dispatch({
+        type: ActionKind.setEditedIssueAction,
+        payload: { issue }
+      })
+    }
     router.replace(`?modal=true&id=${_id}`)
   }
 

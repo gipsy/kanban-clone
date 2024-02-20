@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useEffect }            from 'react'
-import BoardColumn                     from "@/components/boards/BoardColumn"
-import { ActionKind, useBoard }                    from "@/context/BoardProvider"
+import IssueCard                       from "@/components/cards/IssueCard"
+import { withStatus }                  from "@/hoc/withStatus"
+import { ActionKind, useBoard }        from "@/context/BoardProvider"
 import { IIssue }                      from "@/database/issue.model"
 import { DragDropContext, DropResult } from "react-beautiful-dnd"
 import {
@@ -13,7 +14,6 @@ import {
   UpdateIssueParams, 
   UpdateIssueResponse 
 }                                     from "@/lib/actions/shared.types"
-import { TEntity }                    from "@/types"
 import { usePathname }                from "next/navigation"
 
 interface BoardMainProps {
@@ -22,7 +22,11 @@ interface BoardMainProps {
   issues: IIssue[]
 }
 
-const BoardMainProps = ({
+const TodoColumn = withStatus(IssueCard, 'to-do')
+const InProgressColumn = withStatus(IssueCard, 'in-progress')
+const DoneColumn = withStatus(IssueCard, 'done')
+
+const BoardMain = ({
   boardId,
   issues,
   updateIssue
@@ -40,6 +44,7 @@ const BoardMainProps = ({
 
   const onDragEndHandler = async (result: DropResult) => {
     const { destination } = result
+    if (!destination) return
     // 1. find prev, current, next items
     const sortablePayload = createSortablePayloadByIndex(state.issues, result)
 
@@ -53,7 +58,7 @@ const BoardMainProps = ({
       ...newItems[currIndex],
       rank: newRank.toString(),
       status: destination?.droppableId,
-    } as TEntity
+    } as IIssue
 
     // 4. set state & save item
     dispatch({
@@ -79,17 +84,17 @@ const BoardMainProps = ({
     >
       <div className="flex mb-4 h-screen">
         <div className="w-1/3 mx-3 h-12">
-          <BoardColumn status="to-do" />
+          <TodoColumn />
         </div>
         <div className="w-1/3 mx-3 h-12">
-          <BoardColumn status="in-progress" />
+          <InProgressColumn />
         </div>
         <div className="w-1/3 mx-3 h-12">
-          <BoardColumn status="done" />
+          <DoneColumn />
         </div>
       </div>
     </DragDropContext>
   )
 }
 
-export default BoardMainProps
+export default BoardMain
