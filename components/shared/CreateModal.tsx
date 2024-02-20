@@ -74,6 +74,7 @@ const CreateModal = ({
   })
 
   function onCancelHandler(e: MouseEvent<HTMLButtonElement>) {
+    console.log('onCancelHandler')
     e.preventDefault()
     if (params.id) {
       router.replace(`/board/${params.id}`, undefined)
@@ -87,11 +88,13 @@ const CreateModal = ({
   }
 
   async function onSubmit(values: z.infer<typeof BoardsOrIssuesSchema>) {
+    console.log('onSubmit')
     setIsSubmitting(true)
     const { title, description } = values as { title: string, description: string }
 
     try {
       if (board) {
+        console.log('BOARD', board)
         await createBoard({
           title,
           issues: [],
