@@ -9,7 +9,16 @@ import { DragUpdate }                   from "react-beautiful-dnd"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-};
+}
+
+/** Compare Mongo/Mongoose _id (ObjectId) with string id from props or DnD. */
+export function issueIdEquals(
+  a: string | { toString(): string } | null | undefined,
+  b: string | { toString(): string } | null | undefined
+): boolean {
+  if (a == null || b == null) return false
+  return String(a) === String(b)
+}
 
 export const getTimestamp = (createdAt: Date): string => {
   return formatDistanceToNow(createdAt, { addSuffix: true })
@@ -44,11 +53,11 @@ export function createSortablePayloadByIndex(items: IIssue[], event: DragUpdate)
   const { draggableId, destination } = event
 
   const colItems = items.filter(item => item.status === destination?.droppableId)
-    .filter(item => item._id !== draggableId)
+    .filter(item => !issueIdEquals(item._id, draggableId))
 
   let prevEntity, nextEntity
 
-  const entity = items.find(item => item._id === draggableId)
+  const entity = items.find(item => issueIdEquals(item._id, draggableId))
 
   for (const [i] of colItems.entries()) {
     if (i === destination?.index) {

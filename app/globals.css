@@ -6,6 +6,7 @@
 
 body {
   font-family: "Inter", sans-serif;
+  @apply bg-light-850 text-dark-100 dark:bg-dark-100 dark:text-light-800;
 }
 
 @layer utilities {
@@ -22,7 +23,7 @@ body {
   }
 
   .card-wrapper {
-    @apply bg-light-900 dark:dark-gradient shadow-light-100 dark:shadow-dark-100;
+    @apply border border-light-800 bg-light-900 shadow-light-100 dark:border-dark-500/60 dark:bg-dark-400 dark:shadow-dark-100;
   }
 
   .btn {
@@ -48,8 +49,8 @@ body {
   .dark-gradient {
     background: linear-gradient(
         232deg,
-        rgba(23, 28, 35, 0.41) 0%,
-        rgba(19, 22, 28, 0.7) 100%
+        rgba(20, 22, 31, 0.92) 0%,
+        rgba(12, 14, 20, 0.98) 100%
     );
   }
 
@@ -99,6 +100,18 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: #14161f;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
 }
 
 /* Markdown Start */

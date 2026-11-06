@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  serverExternalPackages: ['mongoose'],
   experimental: {
     // serverActions: true,
     mdxRs: true,
-    serverComponentsExternalPackages: ['mongoose']
   },
   images: {
     remotePatterns: [

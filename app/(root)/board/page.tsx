@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from "react"
 
 import CreateModal            from "@/components/shared/CreateModal"
 import Link                   from "next/link"
@@ -9,19 +9,22 @@ import { Button }             from "@/components/ui/button"
 import { getBoards }          from "@/lib/actions/board.action"
 
 interface BoardsPageProps {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-const Page = async ({
-  searchParams
-}: BoardsPageProps) => {
-  const showModal = searchParams?.modal
-  const { q } = searchParams ?? { q: "" }
-  const boards = await getBoards({ q } as { q: string })
+const Page = async ({ searchParams }: BoardsPageProps) => {
+  const resolved = (await searchParams) ?? {}
+  const showModal = resolved.modal
+  const q = typeof resolved.q === 'string' ? resolved.q : ''
+  const boards = await getBoards({ q })
 
   return (
     <>
-      {showModal && <CreateModal board />}
+      {showModal && (
+        <Suspense fallback={null}>
+          <CreateModal board />
+        </Suspense>
+      )}
       <div className="flex w-full flex-col-reverse justify-between sm:flex-row sm:items-center">
         <h1 className="flex-1 h1-bold text-dark100_light900">Your boards</h1>
         {boards !== undefined && boards.length > 0 &&

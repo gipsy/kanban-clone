@@ -5,7 +5,11 @@ let isConnected: boolean = false
 export const connectToDatabase = async () => {
   mongoose.set('strictQuery', true)
   
-  if(!process.env.MONGO_DB_URL) return console.log('MISSING MONGO_DB_URL')
+  if (!process.env.MONGO_DB_URL) {
+    throw new Error(
+      "Missing MONGO_DB_URL. Copy .env.example to .env.local and set your MongoDB connection string."
+    )
+  }
   
   if (isConnected) {
     return console.log('MongoDB is already connected')

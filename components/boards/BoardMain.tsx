@@ -7,8 +7,9 @@ import { ActionKind, useBoard }        from "@/context/BoardProvider"
 import { IIssue }                      from "@/database/issue.model"
 import { DragDropContext, DropResult } from "react-beautiful-dnd"
 import {
-  createSortablePayloadByIndex, 
-  getBetweenRankAsc, 
+  createSortablePayloadByIndex,
+  getBetweenRankAsc,
+  issueIdEquals,
   sortByLexoRankAsc }                  from "@/lib/utils"
 import { 
   UpdateIssueParams, 
@@ -51,7 +52,8 @@ const BoardMain = ({
     // 2. calculate new rank
     const newRank = getBetweenRankAsc(sortablePayload)
     const newItems = [...state.issues]
-    const currIndex = state.issues.findIndex(x => x._id === sortablePayload.entity?._id)
+    const currIndex = state.issues.findIndex((x) =>
+      issueIdEquals(x._id, sortablePayload.entity?._id))
 
     // 3. replace current rank and state
     newItems[currIndex] = {
@@ -66,9 +68,15 @@ const BoardMain = ({
       payload: { issues: newItems }
     })
 
+    const issue = newItems[currIndex]
     const payload = {
-      ...newItems[currIndex],
-      path: pathname
+      _id: String(issue._id),
+      title: issue.title,
+      description: issue.description,
+      rank: issue.rank,
+      status: issue.status,
+      boardId: issue.boardId,
+      path: pathname,
     }
 
     try {

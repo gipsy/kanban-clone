@@ -1,5 +1,6 @@
 "use client"
 
+import React, { Suspense }      from "react"
 import Link                     from "next/link"
 import Image                    from "next/image"
 import MobileNav                from "@/components/shared/navbar/MobileNav"
@@ -31,7 +32,11 @@ const Navbar = () => {
       </Link>
       
       
-      {!params.id && pathname.includes('/board') && <GlobalSearch /> }
+      {!params.id && pathname.includes("/board") && (
+        <Suspense fallback={null}>
+          <GlobalSearch />
+        </Suspense>
+      )}
 
       <div className="flex-between gap-5">
         
