@@ -1,4 +1,4 @@
-import React            from 'react'
+import React, { Suspense } from "react"
 import { getBoardById } from "@/lib/actions/board.action"
 import { updateIssue }  from "@/lib/actions/issue.action"
 import { IBoard }       from "@/database/board.model"
@@ -8,32 +8,39 @@ import CreateModal      from "@/components/shared/CreateModal"
 import LocalSearch      from "@/components/search/LocalSearch"
 
 interface BoardViewPageProps {
-  params: {id: number};
-  searchParams?: { [key: string]: string | RegExp };
+  params: Promise<{ id: string }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-const Page = async ({
-  params, searchParams
-}: BoardViewPageProps) => {
-  const { id } = params
-  const { q } = searchParams ?? { q: "" }
+const Page = async ({ params, searchParams }: BoardViewPageProps) => {
+  const { id } = await params
+  const resolvedSearch = (await searchParams) ?? {}
+  const q = typeof resolvedSearch.q === 'string' ? resolvedSearch.q : ''
   const board: IBoard = await getBoardById({id, q})
 
   const { title, _id } = board
 
-  const showModal = searchParams?.modal
+  const showModal = resolvedSearch.modal
   const boardId = JSON.stringify(_id)
   const serializedIssues = JSON.parse(JSON.stringify(board.issues))
 
   return (
     <>
-      {showModal && <CreateModal boardId={boardId} />}
-      <h1 className="text-lg font-bold capitalize mx-3 mb-4">{title}</h1>
-      <LocalSearch 
-        iconPosition="left"
-        imgSrc="/assets/icons/search.svg"
-        placeholder="Search issues by title name"
-      />
+      {showModal && (
+        <Suspense fallback={null}>
+          <CreateModal boardId={boardId} />
+        </Suspense>
+      )}
+      <h1 className="mx-3 mb-4 text-lg font-bold capitalize text-dark-200 dark:text-light-900">
+        {title}
+      </h1>
+      <Suspense fallback={null}>
+        <LocalSearch
+          iconPosition="left"
+          imgSrc="/assets/icons/search.svg"
+          placeholder="Search issues by title name"
+        />
+      </Suspense>
       {board.issues.length > 0 
         ? (
           <BoardMain 

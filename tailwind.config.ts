@@ -21,11 +21,12 @@ const config: Config = {
           100: "#FFF1E6",
         },
         dark: {
-          100: "#000000",
-          200: "#0F1117",
-          300: "#151821",
-          400: "#212734",
-          500: "#101012",
+          /* Cool zinc–slate tones: less harsh than pure black, clearer hierarchy */
+          100: "#09090b",
+          200: "#0c0e14",
+          300: "#14161f",
+          400: "#1e2230",
+          500: "#252a3a",
         },
         light: {
           900: "#FFFFFF",

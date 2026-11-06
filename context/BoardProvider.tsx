@@ -4,6 +4,7 @@ import React, { createContext, useContext,
     useReducer, Dispatch, Reducer }        from "react"
 
 import { IIssue }       from "@/database/issue.model"
+import { issueIdEquals } from "@/lib/utils"
 
 export enum ActionKind {
   addIssueAction       = 'ADD_ISSUE',
@@ -52,13 +53,16 @@ const reducer = (state: State, action: Action): State => {
 
     case ActionKind.updateIssueAction:
       const updatedIssues = state.issues.map((issue) =>
-        issue._id === action.payload.issue?._id ? action.payload.issue : issue)
+        issueIdEquals(issue._id, action.payload.issue?._id)
+          ? action.payload.issue
+          : issue)
       return { ...state, issues: updatedIssues }
 
     case ActionKind.deleteIssueAction:
       const { _id } = action.payload
       return {
-        ...state, issues: state.issues.filter((issue) => issue._id !== _id)
+        ...state,
+        issues: state.issues.filter((issue) => !issueIdEquals(issue._id, _id)),
       }
 
     case ActionKind.setEditedIssueAction:

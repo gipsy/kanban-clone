@@ -13,9 +13,9 @@ const IssueAdd = ({
   return (
     <Link 
       href={`?modal=true&status=${status}`}
-      className="w-full p-2 mb-1 rounded-[10px] hover:bg-light-700 dark:bg-dark-300 dark:hover:bg-dark-300"
+      className="mb-1 w-full rounded-[10px] p-2 text-dark-300 hover:bg-light-700 dark:text-light-700 dark:hover:bg-dark-400"
     >
-      <Button className="p-0 h-8">
+      <Button variant="ghost" className="h-8 w-full justify-start p-0 text-inherit hover:bg-transparent">
         <Image
           src="/assets/icons/plus.svg"
           alt="add new issue"

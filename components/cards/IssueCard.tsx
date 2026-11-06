@@ -1,5 +1,5 @@
 import React            from 'react'
-import { getTimestamp } from "@/lib/utils"
+import { getTimestamp, issueIdEquals } from "@/lib/utils"
 import { ActionKind, useBoard }     from "@/context/BoardProvider"
 import { useRouter }    from "next/navigation"
 import { Draggable }    from "react-beautiful-dnd"
@@ -32,7 +32,7 @@ const IssueCard = ({
   const params = useParams()
 
   const onEditIssueHandler = async () => {
-    const issue = state.issues.find(issue => issue._id === _id)
+    const issue = state.issues.find((row) => issueIdEquals(row._id, _id))
     if (issue) {
       dispatch({
         type: ActionKind.setEditedIssueAction,
@@ -56,7 +56,11 @@ const IssueCard = ({
   }
 
   return (
-    <Draggable draggableId={_id} index={index}>
+    <Draggable
+      draggableId={_id}
+      index={index}
+      isDragDisabled={false}
+    >
       {(provided) => (
         <div
           ref={provided.innerRef}
@@ -67,12 +71,20 @@ const IssueCard = ({
           "
         >
           <div>
-            <h4>{rank}</h4>
-            <h4 className="mb-4">{title}</h4>
-            <p className="text-sm">{description}</p>
+            <h4 className="text-xs font-medium text-dark-400 dark:text-light-500">
+              {rank}
+            </h4>
+            <h4 className="mb-2 text-base font-semibold text-dark-300 dark:text-light-900">
+              {title}
+            </h4>
+            <p className="text-sm text-dark-400 dark:text-light-700">
+              {description}
+            </p>
           </div>
           <div className="flex justify-items-center mt-5">
-            <div className="inline-flex justify-center flex-col text-xs flex-1 cursor-default">{getTimestamp(new Date(createdAt))}</div>
+            <div className="inline-flex justify-center flex-col text-xs flex-1 cursor-default text-dark-400 dark:text-light-600">
+              {getTimestamp(new Date(createdAt))}
+            </div>
             <div className="flex-none">
               <div className="flex">
                 <Button

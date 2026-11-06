@@ -53,8 +53,8 @@ export interface DeleteBoardParams {
 }
 
 export interface GetBoardByIdParams {
-  id: number;
-  q?: string | RegExp;
+  id: string
+  q?: string | RegExp
 }
 
 export interface GetBoardsParams {
